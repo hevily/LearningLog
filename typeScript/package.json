@@ -1,0 +1,16 @@
+{
+  "name": "typeScript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "dev": "parcel index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "ranshaw",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^2.8.3"
+  }
+}

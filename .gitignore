@@ -1,0 +1,5 @@
+node_modules
+dist
+.DB_store
+.vscode
+/typeScript/node_modules
