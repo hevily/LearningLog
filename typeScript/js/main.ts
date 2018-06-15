@@ -1,27 +1,9 @@
-class Student {
-    fullName: string;
-    constructor(public firstName, public middleInitial,public lastName) {
-        this.fullName = firstName + " " + middleInitial + " " + lastName;
-    }
-}
+// 元组
 
-interface Person {
-    firstName: string;
-    lastName: string;
-}
-
-function greeter (person: Person) {
-    return `Hello,${person.firstName} ${person.lastName}`
-}
-
-let user = new Student('Ran','','shaw')
-// document.body.innerHTML = greeter(user);
-
-let list: number[] = []
-
-enum Color {Red, Green, Blue}
-let c= Color[2]
-
-console.log(c)
-
+let tuple: [string,number];
+tuple = ['hello',10]
+// tuple = [1, 2] 不能将类型“[number, number]”分配给类型“[string, number]”。
+// 不能将类型“number”分配给类型“string”
+console.log(tuple)
+ 
  

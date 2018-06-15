@@ -1,5 +1,6 @@
 node_modules
 dist
 .DB_store
+.DS_Store
 .vscode
 /typeScript/node_modules
