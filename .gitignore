@@ -3,6 +3,5 @@ dist
 .DB_store
 .DS_Store
 .vscode
-/typeScript/node_modules
 *.cache
 /*/node_modules
