@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>分页</title>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+
+    <style>
+        .page {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .page-c {
+            display: inline-block;
+        }
+
+        .page span,
+        .page input {
+            float: left;
+            display: block;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+        }
+
+        .page input {
+            margin: 7px 10px;
+            width: 40px;
+            height: 20px;
+            padding: 0px 2px;
+            border: 1px solid #dad9d9;
+            font-size: 12px;
+        }
+
+        .page .num {
+            cursor: pointer;
+            width: 34px;
+            height: 34px;
+            line-height: 34px;
+            border: 1px solid #dad9d9;
+            margin: 0 2px;
+        }
+
+        .page .num.active,
+        .page .num.active:hover {
+            background: #5D728E;
+            border: 1px solid #5D728E;
+            color: #FFFFFF;
+            cursor: default;
+        }
+
+        .page .prev,
+        .page .next,
+        .page .page-btn {
+            cursor: pointer;
+            width: 70px;
+            height: 34px;
+            line-height: 34px;
+            border: 1px solid #dad9d9;
+            margin: 0 10px;
+        }
+
+        .page .next {
+            margin-right: 20px;
+        }
+
+        .page .num:hover,
+        .page .prev:hover,
+        .page .next:hover,
+        .page .page-btn:hover {
+            border: 1px solid #5D728E;
+            color: #5D728E;
+            z-index: 10px;
+        }
+
+        .page span.disable {
+            background: #F7F7F7 !important;
+            color: #999999 !important;
+            border: 1px solid #cccccc !important;
+            cursor: default !important;
+        }
+
+        .clearfix::after {
+            clear: both;
+            content: '';
+            display: table;
+        }
+    </style>
+    <script>
+        (function (win) {
+            /**
+             * 有setPage和getPage两种方法，分别是设置当前页面和获取当前页面
+             *
+             * @param {string} selector 外层选择器
+             * @param {number} pageCount 总页码
+             *
+             */
+            function pagination(selector, pageCount) {
+                this.page = 1
+                this.pageCount = pageCount
+                this.wrapObj = $(selector)
+                this.htmlTemp = {
+                    prev: '<span class="prev disable" title="上一页">上一页</span>',
+                    next: '<span class="next" title="下一页">下一页</span>',
+                    pageNum: '<span class="num">${num}</span>',
+                    ellipsis: '<span>...</span>',
+                    end: '<span>共 ' + pageCount + ' 页， 到第</span>' +
+                        '						<input class="input jumpPage" type="number" value="" min="1" max="100">' +
+                        '						<span>页</span>' +
+                        '						<span class="page-btn">确定</span>'
+                }
+                // 初始化
+                this._render(this.page)
+
+            }
+
+            pagination.prototype = {
+                _render: function (i) {
+                    console.log('当前页码', i)
+                    if (this.pageCount <= 7) {
+                        var html = ''
+                        for (var i = 0; i < this.pageCount; i++) {
+                            html += this.htmlTemp.pageNum.replace('${num}', i + 1)
+                        }
+                        console.log('html', html);
+
+                        html = this.htmlTemp.prev + html + this.htmlTemp.next + this.htmlTemp.end
+                        this.wrapObj.append(html)
+                        this.pageNumBtn = this.wrapObj.find('.num')
+                        this.prevBtn = this.wrapObj.find('.prev')
+                        this.nextBtn = this.wrapObj.find('.next')
+                        this.jumpBtn = this.wrapObj.find('.page-btn')
+                        this.jumpPage = this.wrapObj.find('.jumpPage')
+                        this._choosePage(this.page)
+                        this._onEvent()
+                    } else if (this.pageCount > 7) {
+                        this._renderMoreNum()
+                    }
+                },
+                _renderMoreNum: function (page) {
+                    this.wrapObj.empty()
+                    var html = ''
+                    var midHtml = ''
+                    var endHtml = ''
+
+                    if (page >= this.pageCount - 3 && this.pageCount >= 8) {
+                        for (var i = 0; i < 2; i++) {
+                            html += this.htmlTemp.pageNum.replace('${num}', i + 1)
+                        }
+                        for (var i = this.pageCount - 5; i < this.pageCount; i++) {
+                            endHtml += this.htmlTemp.pageNum.replace('${num}', i + 1)
+                        }
+                        html = this.htmlTemp.prev + html + this.htmlTemp.ellipsis + endHtml + this.htmlTemp
+                            .next + this.htmlTemp.end
+                    } else if (page >= 5 && this.pageCount >= 8) {
+
+                        for (var i = 0; i < 2; i++) {
+                            html += this.htmlTemp.pageNum.replace('${num}', i + 1)
+                        }
+                        midHtml = this.htmlTemp.pageNum.replace('${num}', page - 1) +
+                            this.htmlTemp.pageNum.replace('${num}', page) +
+                            this.htmlTemp.pageNum.replace('${num}', page + 1)
+                        for (var i = this.pageCount - 2; i < this.pageCount; i++) {
+                            endHtml += this.htmlTemp.pageNum.replace('${num}', i + 1)
+                        }
+                        html = this.htmlTemp.prev + html + this.htmlTemp.ellipsis + midHtml + this.htmlTemp
+                            .ellipsis + endHtml + this.htmlTemp.next + this.htmlTemp.end
+                    } else {
+                        for (var i = 0; i < 5; i++) {
+                            html += this.htmlTemp.pageNum.replace('${num}', i + 1)
+                        }
+                        for (var i = this.pageCount - 2; i < this.pageCount; i++) {
+                            endHtml += this.htmlTemp.pageNum.replace('${num}', i + 1)
+                        }
+                        html = this.htmlTemp.prev + html + this.htmlTemp.ellipsis + endHtml + this.htmlTemp
+                            .next + this.htmlTemp.end
+                    }
+                    this.wrapObj.append(html)
+                    this.pageNumBtn = this.wrapObj.find('.num')
+                    this.prevBtn = this.wrapObj.find('.prev')
+                    this.nextBtn = this.wrapObj.find('.next')
+                    this.jumpBtn = this.wrapObj.find('.page-btn')
+                    this.jumpPage = this.wrapObj.find('.jumpPage')
+                    this._choosePage(this.page)
+                    this._onEvent()
+                },
+                _choosePage: function (page) {
+                    this.pageNumBtn.removeClass('active')
+                    this.pageNumBtn.each(function (i, v) {
+                        if ($(v).text() == page) {
+                            $(v).addClass('active')
+                        }
+                    })
+                },
+                _onEvent: function () {
+                    var _this = this
+                    this.pageNumBtn.on('click', function (e) {
+                        _this._watchPageChange(Number($(this).text()))
+                    })
+                    this.nextBtn.on('click', function (e) {
+                        _this._next()
+                        _this._watchPageChange(_this.page)
+                    })
+                    this.prevBtn.on('click', function (e) {
+                        _this._prev()
+                        _this._watchPageChange(_this.page)
+                    })
+                    _this.jumpPage.on('change', function (e) {
+                        $(this).attr('value', e.target.value)
+                    })
+                    this.jumpBtn.on('click', function (e) {
+                        var page = Number(_this.jumpPage.attr('value'))
+                        if (page > _this.pageCount || page < 1) {
+                            return
+                        }
+                        _this._watchPageChange(page)
+                    })
+                },
+                _changePrevAndNext: function (page) {
+
+                    if (page > 1) {
+                        this.prevBtn.removeClass('disable')
+                    }
+                    if (page === this.pageCount) {
+                        this.nextBtn.addClass('disable')
+                    }
+                    if (page === 1) {
+                        this.prevBtn.addClass('disable')
+                    }
+                    if (page < this.pageCount) {
+                        this.nextBtn.removeClass('disable')
+                    }
+                },
+                _watchPageChange: function (page) {
+                    this.page = page
+                    if (this.pageCount > 7) {
+                        this._renderMoreNum(page)
+                    }
+                    this._choosePage(this.page)
+                    this.cb && this.cb(this.page)
+                    this._changePrevAndNext(page)
+                },
+                _next: function () {
+                    this.page++
+                        if (this.page > this.pageCount) {
+                            this.page = this.pageCount
+                        }
+                },
+                _prev: function () {
+                    if (this.page <= 1) {
+                        this.page = 2
+                    }
+                    this.page--
+                }
+            }
+
+            pagination.prototype.getPage = function (fn) {
+                fn && (this.cb = fn)
+            }
+
+            pagination.prototype.setPage = function (num) {
+                this._watchPageChange(num)
+            }
+            win.pagination = pagination
+        })(window)
+    </script>
+</head>
+
+<body>
+    <div class="page">
+        <div class="page-c clearfix">
+        </div>
+    </div>
+</body>
+<script>
+    var p = new pagination('.page-c', 99)
+    p.setPage(1)
+    p.getPage(function (page) {
+      console.log('当前页面', page)
+       
+    })
+</script>
+</html>
