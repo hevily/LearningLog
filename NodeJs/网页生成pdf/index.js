@@ -9,14 +9,14 @@ const getHtml = url => {
 };
 
 const getJSCourse = () => {
-  const { url, name, wrapEle, getUrlList } = javaScriptCourse;
+  const { url, name, wrapEle, getUrlList, css } = javaScriptCourse;
 
   getHtml(url).then(res => {
     const urlList = getUrlList(res, wrapEle, url);
     percollate.configure();
     percollate.pdf(urlList, {
       output: name,
-      css: baseOpt.css
+      css
     });
   });
 };
@@ -41,6 +41,7 @@ const getEs6Course = () => {
       reqList.push(getHtml(v));
     });
     console.log("开始发出请求...");
+
     Promise.all(reqList)
       .then(arrRes => {
         console.log("所有请求都成功了---");
@@ -57,7 +58,8 @@ const getEs6Course = () => {
         });
         console.log("开始生成pdf文件...");
         markdownpdf({
-          paperFormat: "Legal"
+          paperFormat: "A6"
+          // paperOrientation: "landscape"
         })
           .from(`${optPath}${name}.md`)
           .to(`${optPath}${name}.pdf`, function() {

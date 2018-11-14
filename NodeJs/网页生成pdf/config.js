@@ -9,6 +9,7 @@ const javaScriptCourse = {
   url: "https://wangdoc.com/javascript",
   name: "阮一峰JavaScript教程.pdf",
   wrapEle: ".menu-list",
+  css: "@page { size: A6 landscape } html { font-size: 18pt } ",
   getUrlList(body, ele, url) {
     let urlList = [];
     $(body)
