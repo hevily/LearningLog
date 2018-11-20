@@ -22,20 +22,7 @@ class App extends Component {
     this.setState({
       num3: this.state.num1 + 1
     });
-    console.log("num-----111", this.state);
-
-    setTimeout(() => {
-      this.setState({
-        test1: "test111111",
-        num2: this.state.num2 + 1
-      });
-      console.log("num-----222", this.state.num2);
-    }, 1000);
-    // setTimeout(() => {
-    //   this.setState({
-    //     test2: "test222222"
-    //   });
-    // }, 1050);
+    
   }
   render() {
     return (

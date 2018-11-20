@@ -2,9 +2,7 @@ import { routerRedux } from 'dva/router';
 import React from 'react';
 import { connect } from 'dva';
 import styles from './index.css';
-console.log('routerRedux---', routerRedux);
 @connect(state => {
-  console.log('state---', state);
   return state;
 })
 class IndexPage extends React.Component {
