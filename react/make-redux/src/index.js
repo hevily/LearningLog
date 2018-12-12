@@ -1,64 +1,70 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
- 
-const appState = {
-    title: {
-      text: 'React.js 小书',
-      color: 'red',
-    },
-    content: {
-      text: 'React.js 小书内容',
-      color: 'blue'
-    }
-  }
-  function renderApp (appState) {
-    renderTitle(appState.title)
-    renderContent(appState.content)
-  }
-  function renderTitle (title) {
-    const titleDOM = document.getElementById('title')
-    titleDOM.innerHTML = title.text
-    titleDOM.style.color = title.color
-  }
-  function renderContent (content) {
-    const contentDOM = document.getElementById('content')
-    contentDOM.innerHTML = content.text
-    contentDOM.style.color = content.color
-  }
-  function stateChanger(state,action) {
-      switch(action.type) {
-          case 'UPDATE_TITLE_TEXT':
-          state.title.text = action.text
-          break;
-          case 'UPDATE_TITLE_COLOR':
-          state.title.color = action.color
-          break;
-          default:
-          break;
-      }
-  }
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import ReactDOM from 'react-dom'
+import Header from './Header'
+import Content from './Content'
+import './index.css'
 
-  function createStore (state,stateChanger) {
-    const listeners = []
-    const subscribe = (listener) => listeners.push(listener)
-    const getState = () => state
-    const dispatch = (action) => {
-      stateChanger(state,action)
-      listeners.forEach((listener) => {
-        listener()
-      })
+function createStore (reducer) {
+let state = null
+const listeners = []
+const subscribe = (listener) => listeners.push(listener)
+const getState = () => state
+const dispatch = (action) => {
+state  = reducer(state,action)
+listeners.forEach((listener) => listener())
+}
+dispatch({})
+return {
+    getState,
+    dispatch,
+    subscribe
+}
+}
+
+const themeReducer = (state,action) => {
+    if(!state) return {
+        themeColor: 'red'
     }
-    return {getState,dispatch,subscribe}
+    switch (action.type) {
+        case 'CHANGE_COLOR':
+        return {
+            ...state,
+            themeColor: action.themeColor
+        }
+        default:
+        return state
+    }
+}
+
+const store = createStore(themeReducer)
+
+class Index extends Component {
+    static childContextTypes = {
+        store: PropTypes.object
+    }
+    constructor(props) {
+        super(props);
+        this.state ={
+
+        }
+    }
+    getChildContext () {
+        return { store }
+      }
+  render () {
+    console.log('index-this',this)
+    return (
+      <div>
+        <Header />
+        <Content />
+      </div>
+    )
   }
-  const store = createStore(appState,stateChanger)
-  store.subscribe(() => renderApp(store.getState()))
-  renderApp(store.getState())
-  store.dispatch({
-    type: 'UPDATE_TITLE_TEXT',
-    text: '222'
-  })
-  // store.dispatch({
-  //   type: 'UPDATE_TITLE_TEXT',
-  //   text: '3333'
-  // })
+}
+
+ReactDOM.render(
+  <Index />,
+  document.getElementById('root')
+)
  
