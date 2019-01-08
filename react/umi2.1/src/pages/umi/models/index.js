@@ -3,7 +3,7 @@ import { test } from '../services';
 import { message } from 'antd';
 
 export default {
-  namespace: 'test',
+  namespace: 'umi',
   state: {
     test: '11',
   },

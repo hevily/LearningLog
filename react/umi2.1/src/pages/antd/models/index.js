@@ -3,17 +3,20 @@ import { test } from '../services';
 import { message } from 'antd';
 
 export default {
-  namespace: 'dvaData',
+  namespace: 'antd',
   state: {
     test: '11',
-    navList: '无数据',
   },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(location => {
-        if (location.pathname === '/dva') {
+        if (location.pathname === '/businessHangingAccounts') {
           dispatch({
-            type: 'clearData',
+            type: 'getPageList',
+            payload: {},
+          });
+          dispatch({
+            type: 'getFilterStateList',
           });
         }
       });
@@ -24,31 +27,17 @@ export default {
     *toTest({ payload }, { put, call, select }) {
       const data = yield call(test, payload);
       if (data.code === 'S000000') {
+        // yield put(routerRedux.push('/knowledge'));
         message.success('请求数据成功！');
       } else {
         throw data;
       }
-    },
-    *getOtherModal({ payload }, { select, put }) {
-      const navList = yield select(state => state.layout.navList);
-      console.log('navList', navList);
-      yield put({
-        type: 'saveData',
-        payload: navList,
-      });
-    },
-    *clearData({}, { put }) {
-      yield put({
-        type: 'saveData',
-        payload: [],
-      });
     },
   },
   reducers: {
     saveData(state, { payload }) {
       return {
         ...state,
-        navList: payload,
       };
     },
   },

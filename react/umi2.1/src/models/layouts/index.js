@@ -19,19 +19,25 @@ export default {
         title: 'UMI',
         route: '#/umi',
       },
+      {
+        title: 'Antd',
+        route: '#/antd',
+      },
     ],
   },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(location => {
-        if (location.pathname === '/businessHangingAccounts') {
-          dispatch({
-            type: 'getPageList',
-            payload: {},
-          });
-          dispatch({
-            type: 'getFilterStateList',
-          });
+        dispatch({
+          type: 'toChangeNowNav',
+          payload: location.pathname,
+        });
+
+        if (location.pathname === '/antd') {
+          // 取消effects, 取消之后从新进入页面不会再次加载
+          // dispatch({
+          //   type: 'dvaData/@@CANCEL_EFFECTS',
+          // });
         }
       });
     },
@@ -46,6 +52,19 @@ export default {
       } else {
         throw data;
       }
+    },
+    *toChangeNowNav({ payload }, { put, select }) {
+      const navList = yield select(state => state.layout.navList);
+      let i = 0;
+      navList.forEach((element, index) => {
+        if (element.route.slice(1) === payload) {
+          i = index;
+        }
+      });
+      yield put({
+        type: 'toSwitchNav',
+        payload: i,
+      });
     },
   },
   reducers: {

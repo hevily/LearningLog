@@ -11,6 +11,10 @@
 - 打生产包
   > npm run build
 
+### 功能
+
+- umi 已配置 antd 的按需加载
+
 ### 参考文档
 
 - [react-bootstrap](https://react-bootstrap.github.io/getting-started/introduction)
