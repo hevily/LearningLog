@@ -30,6 +30,7 @@
     "node": ">=8.0.0"
   },
   "dependencies": {
+    "dva-model-extend": "^0.1.2",
     "react-bootstrap": "^0.32.4"
   }
 }

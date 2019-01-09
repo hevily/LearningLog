@@ -57,7 +57,7 @@ export default {
       const navList = yield select(state => state.layout.navList);
       let i = 0;
       navList.forEach((element, index) => {
-        if (element.route.slice(1) === payload) {
+        if (payload.includes(element.route.slice(1))) {
           i = index;
         }
       });
