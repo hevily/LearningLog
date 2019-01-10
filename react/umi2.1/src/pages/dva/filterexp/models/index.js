@@ -8,17 +8,51 @@ export default modelExtend(filterModel({ reqFn: test, namespace: 'filter' }), {
   namespace: 'filter',
   state: {
     test: '11',
+    columns: [
+      {
+        title: '提交时间',
+        dataIndex: 'createDate',
+        key: 'createDate',
+      },
+      {
+        title: '销账单号',
+        dataIndex: 'invoicePaymentNo',
+        key: 'invoicePaymentNo',
+      },
+      {
+        title: '回执单号',
+        dataIndex: 'transferReceiptNo',
+        key: 'transferReceiptNo',
+      },
+      {
+        title: '企业账号',
+        dataIndex: 'companyAccountName',
+        key: 'companyAccountName',
+      },
+      {
+        title: '企业名称',
+        dataIndex: 'company',
+        key: 'company',
+      },
+      {
+        title: '发票金额',
+        dataIndex: 'invoiceAmount',
+        key: 'invoiceAmount',
+      },
+      {
+        title: '状态',
+        dataIndex: 'status',
+        key: 'status',
+      },
+    ],
   },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(location => {
-        if (location.pathname === '/businessHangingAccounts') {
+        if (location.pathname === '/dva/filterexp') {
           dispatch({
             type: 'getPageList',
             payload: {},
-          });
-          dispatch({
-            type: 'getFilterStateList',
           });
         }
       });

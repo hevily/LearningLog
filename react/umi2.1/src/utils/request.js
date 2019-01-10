@@ -75,7 +75,7 @@ export default function request(url, options, preName = aggerStr) {
   if (options) {
     opt = { ...opt, ...options };
   }
-  // console.log(path, opt, token);
+  console.log(path, opt, token);
   return fetch(path, opt)
     .then(checkStatus)
     .then(parseJSON)

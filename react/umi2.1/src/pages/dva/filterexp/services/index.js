@@ -1,9 +1,14 @@
-import request from 'utils/request'
-import { mockApi } from 'config'
-const { index } = mockApi
+import request from 'utils/request';
+import { mockApi } from 'config';
+const { dva } = mockApi;
 
-exports.test = () => {
-  return request(index.test, {
-    method: 'GET',
-  }, '')
-}
+exports.test = params => {
+  return request(
+    dva.list,
+    {
+      method: 'POST',
+      body: JSON.stringify(params),
+    },
+    ''
+  );
+};

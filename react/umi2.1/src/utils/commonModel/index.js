@@ -3,7 +3,7 @@ import { message } from 'antd';
 function Filter(options) {
   return {
     state: {
-      indexDataSource: [],
+      dataSource: [],
       pagination: {
         showQuickJumper: true,
         total: 0,
@@ -37,7 +37,7 @@ function Filter(options) {
           Object.assign(payload, searchData);
         }
         const ret = yield call(options.reqFn, payload);
-
+        console.log('ret---', ret);
         if (ret.code === 'S000000') {
           yield put({
             type: 'pageList',
@@ -54,7 +54,7 @@ function Filter(options) {
         return {
           ...state,
           pagination: { ...state.pagination, total, current: pageNum },
-          indexDataSource: list,
+          dataSource: list,
         };
       },
       saveSearchData(state, { payload }) {

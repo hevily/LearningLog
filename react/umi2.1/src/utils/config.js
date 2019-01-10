@@ -7,6 +7,9 @@ module.exports = {
     knowledge: {
       tree: '/getTree',
     },
+    dva: {
+      list: '/getList',
+    },
   },
   api: {},
 };
