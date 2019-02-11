@@ -38,23 +38,20 @@ const index = ({ dvaData, dispatch }) => {
             </code>
           </div>
         </Panel>
-        <Panel header="model的复用" key="2">
+        <Panel header="动态扩展model" key="2">
           <div className={styles.panelCon}>
-            <code>提取公众的model，dva中的Loading既是如此</code>
-          </div>
-        </Panel>
-        <Panel header="动态扩展model" key="3">
-          <div className={styles.panelCon}>
-            <code />
+            <p>将model中的通用代码提取出来，对需要此功能的model进行扩展</p>
+            <code>
+              当我们遇到几个业务视图长得差不多，model也存在少量差别，我们可以将相同的逻辑提取出出来，
+              再对需要此逻辑的model进行扩展，因为dva中的model实际上就是普通的对象，包含namespace，
+              state，reducers，effects，subscriptions。从这个角度看，我们要新增或者覆盖一些东西，
+              都会是比较容易的，比如说，使用Object.assign来进行对象属性复制，就可以把新的内容添加或者覆盖到原有对象上。
+              注意这里有两级，model结构中的state，reducers，effects，subscriptions都是对象结构，需要分别在这一级去做assign。
+              可以借助dva社区的dva-model-extend库来做这件事。
+            </code>
             <Button className={styles.btn} onClick={throttle(toFilterExm)}>
-              点击查看示例
+              点击查看搜索页面示例
             </Button>
-          </div>
-        </Panel>
-        <Panel header="路由--routerRedux对象" key="4">
-          <div className={styles.panelCon}>
-            <p>如果以UMI为脚手架，dva暴露出的路由方法将不会生效。</p>
-            <code />
           </div>
         </Panel>
       </Collapse>

@@ -15,17 +15,8 @@ const index = ({ test, dispatch }) => {
     <div className={styles.normal}>
       <div className={styles.welcome} />
       <ul className={styles.list}>
-        <li>
-          To get started, edit <code>src/pages/index.js</code> and save to reload.
-        </li>
-        <li>
-          <a href="https://umijs.org/guide/getting-started.html">Getting Started</a>
-        </li>
-        <Link to="/knowledge">to knowledge page</Link>
+        <li style={{ fontSize: '38px' }}>蓝裔前端后台系统项目示例库</li>
       </ul>
-      <Button onClick={throttle(handelClick)} variant="primary">
-        请求模拟数据
-      </Button>
     </div>
   );
 };

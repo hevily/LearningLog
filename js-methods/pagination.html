@@ -89,6 +89,12 @@
         content: "";
         display: table;
       }
+      .wrap {
+        display: flex;
+        justify-content: center;
+        margin-top: 50px;
+        font-size: 26px;
+      }
     </style>
     <script>
       (function(win) {
@@ -128,7 +134,6 @@
               for (var i = 0; i < this.pageCount; i++) {
                 html += this.htmlTemp.pageNum.replace("${num}", i + 1);
               }
-              console.log("html", html);
 
               html =
                 this.htmlTemp.prev +
@@ -237,9 +242,7 @@
             });
             this.jumpBtn.on("click", function(e) {
               var page = Number(_this.jumpPage.attr("value"));
-              if (page > _this.pageCount || page < 1) {
-                return;
-              }
+
               _this._watchPageChange(page);
             });
           },
@@ -258,6 +261,9 @@
             }
           },
           _watchPageChange: function(page) {
+            if (page > this.pageCount || page < 1) {
+              return;
+            }
             this.page = page;
             if (this.pageCount > 7) {
               this._renderMoreNum(page);
@@ -290,14 +296,10 @@
         win.Pagination = Pagination;
       })(window);
     </script>
-
-    <script>
-      // 使用观察者模式
-      (function(win) {})(win);
-    </script>
   </head>
 
   <body>
+    <div class="wrap">当前的页码为：<span class="pageNum">1</span></div>
     <div class="page"><div class="page-c clearfix"></div></div>
   </body>
   <script>
@@ -305,6 +307,7 @@
     p.setPage(1);
     p.getPage(function(page) {
       console.log("当前页面", page);
+      $(".pageNum").text(page);
     });
   </script>
 </html>
