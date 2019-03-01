@@ -1,3 +1,5 @@
+import { cloneDeep, isString, flow, curry } from 'lodash'
+
 // 补零
 function formatNumber(n) {
   n = n.toString();
@@ -28,10 +30,10 @@ function div(a, b) {
   let f = 0;
   try {
     e = a.toString().split(".")[1].length;
-  } catch (g) {}
+  } catch (g) { }
   try {
     f = b.toString().split(".")[1].length;
-  } catch (g) {}
+  } catch (g) { }
   return (
     (c = Number(a.toString().replace(".", ""))),
     (d = Number(b.toString().replace(".", ""))),
@@ -63,13 +65,47 @@ function mul(a, b) {
   var e = b.toString();
   try {
     c += d.split(".")[1].length;
-  } catch (f) {}
+  } catch (f) { }
   try {
     c += e.split(".")[1].length;
-  } catch (f) {}
+  } catch (f) { }
   return (
     (Number(d.replace(".", "")) * Number(e.replace(".", ""))) / Math.pow(10, c)
   );
+}
+
+/**
+ * 计算两个时间相差的时间，格式为天，时分秒
+ *
+ * @param {String} diffTime 时间相差的毫秒数
+ * @param {*} start 开始时间
+ * @param {*} end   结束时间
+ * @returns
+ */
+function timeDiff(diffTime, start, end) {
+  // 需这种格式 "2017/08/28 04:56:38"
+  var dateBegin = new Date(start);
+  var dateEnd = new Date(end);
+  var dateDiff = dateEnd.getTime() - dateBegin.getTime();
+  if (diffTime) {
+    dateDiff = diffTime;
+  }
+  var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000));
+  var leave1 = dateDiff % (24 * 3600 * 1000);
+  var hours = Math.floor(leave1 / (3600 * 1000));
+
+  var leave2 = leave1 % (3600 * 1000);
+  var minutes = Math.floor(leave2 / (60 * 1000));
+
+  var leave3 = leave2 % (60 * 1000);
+  var seconds = Math.round(leave3 / 1000);
+  console.log(' 相差 ' + dayDiff + '天 ' + hours + '小时 ' + minutes + ' 分钟' + seconds + ' 秒');
+  return {
+    days: formatNumber(dayDiff),
+    hours: formatNumber(hours),
+    minutes: formatNumber(minutes),
+    seconds: formatNumber(seconds),
+  };
 }
 
 // 小程序倒计时功能
@@ -117,10 +153,10 @@ function countdownTimer(name = "timer") {
       });
     }
     if (
-      (seconds == 0 || seconds == "00") &&
-      (minutes == "00" || minutes == "0") &&
-      (hours == "00" || hours == "0") &&
-      (days == "00" || days == "0")
+      formatNumber(seconds) === '00' &&
+      formatNumber(minutes) === '00' &&
+      formatNumber(hours) === '00' &&
+      formatNumber(days) === '00'
     ) {
       clearInterval(getApp()[name]);
       this.setData({
@@ -139,7 +175,7 @@ function throttle(fn, gapTime) {
 
   let _lastTime = null;
 
-  return function() {
+  return function () {
     let _nowTime = +new Date();
     if (_nowTime - _lastTime > gapTime || !_lastTime) {
       fn.apply(this, arguments);
@@ -151,9 +187,9 @@ function throttle(fn, gapTime) {
 // 函数防抖
 function debounce(fn, wait) {
   var timer = null;
-  return function() {
+  return function () {
     clearTimeout(timer);
-    setTimeout(function() {
+    setTimeout(function () {
       fn && fn();
     }, wait);
   };
@@ -265,7 +301,7 @@ function getRecord(key, value) {
             break;
           }
         }
-      } catch (e) {}
+      } catch (e) { }
 
       return value;
     }
@@ -315,14 +351,14 @@ export function formatNumber(
   var dec = typeof decPoint === "undefined" ? "." : decPoint; // 小数点符号
   var sep = typeof thousandsSep === "undefined" ? "," : thousandsSep; // 千分位符号
   var s = "";
-  var toFixedFix = function(n, prec) {
+  var toFixedFix = function (n, prec) {
     var k = Math.pow(10, prec);
     return (
       "" +
       parseFloat(
         Math[roundtag](parseFloat((n * k).toFixed(prec * 2))).toFixed(prec * 2)
       ) /
-        k
+      k
     );
   };
   s = (prec ? toFixedFix(n, prec) : "" + Math.round(n)).split(".");
@@ -516,14 +552,87 @@ function customLog(message, color = "black") {
 function deepCopy(source, target = {}) {
   var key;
   for (key in source) {
-      if (source.hasOwnProperty(key)) {                         // 意思就是__proto__上面的属性,我不拷贝
-          if (typeof(source[key]) === "object") {               // 如果这一项是object类型,就递归调用deepCopy
-              target[key] = Array.isArray(source[key]) ? [] : {};
-              deepCopy(source[key], target[key]);
-          } else {                                            // 如果不是object类型,就直接赋值拷贝
-              target[key] = source[key];
-          }
+    if (source.hasOwnProperty(key)) {                         // 意思就是__proto__上面的属性,我不拷贝
+      if (typeof (source[key]) === "object") {               // 如果这一项是object类型,就递归调用deepCopy
+        target[key] = Array.isArray(source[key]) ? [] : {};
+        deepCopy(source[key], target[key]);
+      } else {                                            // 如果不是object类型,就直接赋值拷贝
+        target[key] = source[key];
       }
+    }
   }
   return target;
 }
+
+
+
+/**
+ * Query objects that specify keys and values in an array where all values are objects.
+ * @param   {array}         array   An array where all values are objects, like [{key:1},{key:2}].
+ * @param   {string}        key     The key of the object that needs to be queried.
+ * @param   {string}        value   The value of the object that needs to be queried.
+ * @return  {object|undefined}   Return frist object when query success.
+ */
+export function queryArray(array, key, value) {
+  if (!Array.isArray(array)) {
+    return
+  }
+  return array.find(_ => _[key] === value)
+}
+
+
+/**
+ * Convert an array to a tree-structured array.
+ * @param   {array}     array     The Array need to Converted.
+ * @param   {string}    id        The alias of the unique ID of the object in the array.
+ * @param   {string}    parentId       The alias of the parent ID of the object in the array.
+ * @param   {string}    children  The alias of children of the object in the array.
+ * @return  {array}    Return a tree-structured array.
+ */
+export function arrayToTree(
+  array,
+  id = 'id',
+  parentId = 'pid',
+  children = 'children'
+) {
+  const result = []
+  const hash = {}
+  const data = cloneDeep(array)
+
+  data.forEach((item, index) => {
+    hash[data[index][id]] = data[index]
+  })
+
+  data.forEach(item => {
+    const hashParent = hash[item[parentId]]
+    if (hashParent) {
+      !hashParent[children] && (hashParent[children] = [])
+      hashParent[children].push(item)
+    } else {
+      result.push(item)
+    }
+  })
+  return result
+}
+
+/**
+ * 将一维数组转为二维数组
+ *
+ * @param {Array} listData
+ * @param {Number} lineNum
+ * @returns
+ */
+function transformArr(listData, lineNum) {
+  let listArr = [];
+  let cloneList = [...listData];
+  for (let i = 0; i < Math.ceil(listData.length / lineNum); i++) {
+    let mergeArr = [];
+    cloneList.splice(0, lineNum).forEach(v => {
+      mergeArr = mergeArr.concat(v);
+    });
+    listArr.push(mergeArr);
+  }
+  return listArr;
+}
+
+
